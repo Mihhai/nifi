@@ -427,6 +427,21 @@ public class C2NifiClientService {
         result.setProcessingNanos(processorStatus.getProcessingNanos());
         result.setActiveThreadCount(processorStatus.getActiveThreadCount());
         result.setTerminatedThreadCount(processorStatus.getTerminatedThreadCount());
+        if (processorStatus.getRunStatus() != null) {
+            switch (processorStatus.getRunStatus()) {
+                case Running -> result.setRunStatus(RUNNING);
+                case Stopped -> result.setRunStatus(STOPPED);
+                case Disabled -> result.setRunStatus(STOPPED); // treat Disabled as Stopped for heartbeat context
+                case Invalid, Validating -> {
+                    // merge into stopped state initially
+                    // should we extend the enum to include these states?
+                    result.setRunStatus(STOPPED);
+                }
+                default -> {
+                    // leave unset?
+                }
+            }
+        }
         return result;
     }
 
