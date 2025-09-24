@@ -1,0 +1,22 @@
+services:
+  c2-mockserver:
+    image: c2-mockserver:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    networks:
+      - shared-network
+
+  minifi-java:
+    build:
+      context: .
+      dockerfile: ./example/minifi-java.dockerfile
+    volumes:
+      - ./example/minifi-flow.json:/opt/minifi/minifi-current/conf/flow.json.raw
+    networks:
+      - shared-network
+
+networks:
+  shared-network:
